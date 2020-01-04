@@ -1,0 +1,16 @@
+name: Docker Image CI
+on: 
+  push:
+    branches:
+      - master
+jobs:
+  build-and-publish:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Login to docker.io
+      run:  echo ${{ secrets.DOCKER_PWD }} | docker login -u ${{ secrets.DOCKER_LOGIN }} --password-stdin
+    - uses: actions/checkout@v1
+    - name: Build the Docker image
+      run: docker build . --file Dockerfile --tag spaceinvaderz/telegram-sonarr-radarr-bot:latest --tag spaceinvaderz/telegram-sonarr-radarr-bot:${GITHUB_REF:11}
+    - name: Push image to hub.docker.com
+      run: docker push spaceinvaderz/telegram-sonarr-radarr-bot:latest
